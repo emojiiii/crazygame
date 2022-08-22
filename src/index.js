@@ -1,6 +1,7 @@
 /// <reference types="vite/client" />
 
 import styles from "./style.css?inline";
+import {IFRAME_COCO_GAME} from '../const/index'
 
 /**
  * Register it before joining room:
@@ -23,29 +24,15 @@ const Counter = {
   kind: "Counter",
   setup(context) {
     const box = context.getBox();
+    const $content = box.$content
     box.mountStyles(styles);
+    const $myApp = document.createElement("iframe")
+    $myApp.src = "../static/web-desktop/index.html"
+    $myApp.id = IFRAME_COCO_GAME
+    $myApp.style.width = "100%";
+    $myApp.style.height = "100%";
 
-    const $content = document.createElement("div");
-    $content.className = "app-counter";
-    box.mountContent($content);
-
-    const $button = document.createElement("button");
-    $content.appendChild($button);
-
-    const storage = context.createStorage("counter", { count: 0 });
-    $button.onclick = ev => {
-      storage.setState({ count: storage.state.count + (ev.shiftKey ? -1 : 1) });
-    };
-
-    function refresh() {
-      $button.textContent = String(storage.state.count);
-    }
-    const dispose = storage.addStateChangedListener(refresh);
-    refresh();
-
-    context.emitter.on("destroy", () => {
-      dispose();
-    });
+    $content.appendChild($myApp)
   },
 };
 
